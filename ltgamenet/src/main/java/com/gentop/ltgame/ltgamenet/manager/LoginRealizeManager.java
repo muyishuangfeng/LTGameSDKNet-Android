@@ -242,8 +242,6 @@ public class LoginRealizeManager {
                             public void onComplete() {
                             }
                         });
-            } else {
-                mListener.onState(context, RechargeResult.failOf("tokenError"));
             }
 
 
