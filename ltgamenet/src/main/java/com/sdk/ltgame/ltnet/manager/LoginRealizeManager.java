@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.sdk.ltgame.ltnet.base.Constants;
+import com.sdk.ltgame.ltnet.impl.OnAutoCheckLoginListener;
 import com.sdk.ltgame.ltnet.impl.OnWeChatAccessTokenListener;
 import com.sdk.ltgame.ltnet.model.AuthWXModel;
 import com.sdk.ltgame.ltnet.model.WeChatAccessToken;
@@ -358,15 +359,21 @@ public class LoginRealizeManager {
     /**
      * 自动登录验证
      */
-    public static void autoLoginCheck(final Context context, String mBaseUrl, String mLtAppID,
-                                      String mLtAppKey, Map<String, Object> params,
-                                      final OnLoginStateListener mListener) {
-        if (params != null &&
+    public static void autoLoginCheck(String mBaseUrl, String mLtAppID,
+                                      String mLtAppKey, String mLtUid, String mLTUidToken,
+                                      String mPackageName, final OnAutoCheckLoginListener mListener) {
+        if (!TextUtils.isEmpty(mLtUid) &&
+                !TextUtils.isEmpty(mLTUidToken) &&
+                !TextUtils.isEmpty(mPackageName) &&
                 !TextUtils.isEmpty(mBaseUrl) &&
                 !TextUtils.isEmpty(mLtAppID) &&
                 !TextUtils.isEmpty(mLtAppKey)) {
             long LTTime = System.currentTimeMillis() / 1000L;
             String LTToken = MD5Util.md5Decode("POST" + mLtAppID + LTTime + mLtAppKey);
+            Map<String, Object> params = new WeakHashMap<>();
+            params.put("lt_uid", mLtUid);
+            params.put("lt_uid_token", mLTUidToken);
+            params.put("platform_id", mPackageName);
             String json = new Gson().toJson(params);//要传递的json
             final RequestBody requestBody = RequestBody.create(okhttp3.MediaType
                     .parse("application/json; charset=utf-8"), json);
@@ -384,7 +391,12 @@ public class LoginRealizeManager {
                         public void onNext(BaseEntry result) {
                             if (result != null) {
                                 if (mListener != null) {
-                                    mListener.onState((Activity) context, LoginResult.stateOf(result));
+                                    if (result.getCode() == 200) {
+                                        mListener.onCheckedSuccess(result.getMsg());
+                                    } else {
+                                        mListener.onCheckedFailed(result.getMsg());
+                                    }
+
                                 }
                             }
                         }
