@@ -10,6 +10,8 @@ import com.sdk.ltgame.ltnet.base.Constants;
 import com.sdk.ltgame.ltnet.net.conver.GsonConverterFactory;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -27,7 +29,11 @@ public class RetrofitClient implements BaseApi {
         retrofitBuilder.addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(httpBuilder.addInterceptor(getLoggerInterceptor()).build())
+                .client(httpBuilder.addInterceptor(getLoggerInterceptor())
+                        .connectTimeout(30,TimeUnit.SECONDS)
+                        .writeTimeout(30,TimeUnit.SECONDS)
+                        .readTimeout(30,TimeUnit.SECONDS)
+                        .build())
                 .baseUrl(baseUrl);
     }
 
