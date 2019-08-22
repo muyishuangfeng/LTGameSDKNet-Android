@@ -3,6 +3,7 @@ package com.sdk.ltgame.ltnet.net.exception;
 import android.net.ParseException;
 import android.util.Log;
 
+import com.gentop.ltgame.ltgamesdkcore.exception.LTGameError;
 import com.google.gson.JsonParseException;
 
 import org.json.JSONException;
@@ -16,30 +17,30 @@ import java.net.UnknownHostException;
  */
 public class ExceptionHelper {
 
-    public static String handleException(Throwable e) {
+    public static LTGameError handleException(Throwable e) {
         e.printStackTrace();
-        String error;
+        LTGameError error;
         if (e instanceof SocketTimeoutException) {//网络超时
-            error = "网络连接异常";
+            error = LTGameError.make(LTGameError.CODE_REQUEST_ERROR,"Network timeout");
         } else if (e instanceof ConnectException) { //均视为网络错误
-            error = "网络连接异常";
+            error = LTGameError.make(LTGameError.CODE_REQUEST_ERROR,"Network connect timeout");
         } else if (e instanceof JsonParseException
                 || e instanceof JSONException
                 || e instanceof ParseException) {   //均视为解析错误
-            error = "数据解析异常";
+            error = LTGameError.make(LTGameError.CODE_PARSE_ERROR,"Data parse error");
         } else if (e instanceof ApiException) {//服务器返回的错误信息
-            error = e.getCause().getMessage();
+            error = LTGameError.make(LTGameError.CODE_REQUEST_ERROR,e.getCause().getMessage());
         } else if (e instanceof UnknownHostException) {
-            error = "网络连接异常";
+            error = LTGameError.make(LTGameError.CODE_REQUEST_ERROR,"Unknown Host Exception");
         } else if (e instanceof IllegalArgumentException) {
-            error = "下载文件已存在";
+            error = LTGameError.make(LTGameError.CODE_NOT_SUPPORT,"IllegalArgumentException");
         } else {//未知错误
             try {
                 Log.e("TAG", "错误: " + e.getMessage());
             } catch (Exception e1) {
                 Log.e("TAG", "未知错误Debug调试 ");
             }
-            error = "错误";
+            error = LTGameError.make(LTGameError.CODE_NOT_SUPPORT,"unknown error");
         }
         return error;
     }

@@ -11,6 +11,7 @@ import com.sdk.ltgame.ltnet.impl.OnWeChatAccessTokenListener;
 import com.sdk.ltgame.ltnet.model.AuthWXModel;
 import com.sdk.ltgame.ltnet.model.WeChatAccessToken;
 import com.sdk.ltgame.ltnet.net.Api;
+import com.sdk.ltgame.ltnet.net.exception.ExceptionHelper;
 import com.sdk.ltgame.ltnet.util.MD5Util;
 import com.sdk.ltgame.ltnet.util.PreferencesUtils;
 import com.gentop.ltgame.ltgamesdkcore.base.BaseEntry;
@@ -100,7 +101,8 @@ public class LoginRealizeManager {
 
                         @Override
                         public void onError(Throwable e) {
-
+                            mListener.onState((Activity) context,
+                                    LoginResult.failOf(ExceptionHelper.handleException(e)));
                         }
 
                         @Override
@@ -176,7 +178,8 @@ public class LoginRealizeManager {
 
                         @Override
                         public void onError(Throwable e) {
-
+                            mListener.onState((Activity) context,
+                                    LoginResult.failOf(ExceptionHelper.handleException(e)));
                         }
 
                         @Override
@@ -295,7 +298,8 @@ public class LoginRealizeManager {
 
                         @Override
                         public void onError(Throwable e) {
-
+                            mListener.onState((Activity) context,
+                                    RechargeResult.failOf(ExceptionHelper.handleException(e)));
                         }
 
                         @Override
@@ -346,6 +350,8 @@ public class LoginRealizeManager {
 
                         @Override
                         public void onError(Throwable e) {
+                            mListener.onState((Activity) context,
+                                    RechargeResult.failOf(ExceptionHelper.handleException(e)));
                         }
 
                         @Override
@@ -403,7 +409,9 @@ public class LoginRealizeManager {
 
                         @Override
                         public void onError(Throwable e) {
-
+                           if (mListener!=null){
+                               mListener.onCheckedException(ExceptionHelper.handleException(e));
+                           }
                         }
 
                         @Override
@@ -457,7 +465,8 @@ public class LoginRealizeManager {
 
                         @Override
                         public void onError(Throwable e) {
-
+                            mListener.onState((Activity) context,
+                                    LoginResult.failOf(ExceptionHelper.handleException(e)));
                         }
 
                         @Override
@@ -523,7 +532,8 @@ public class LoginRealizeManager {
 
                         @Override
                         public void onError(Throwable e) {
-
+                            mListener.onState((Activity) context,
+                                    LoginResult.failOf(ExceptionHelper.handleException(e)));
                         }
 
                         @Override
@@ -581,7 +591,8 @@ public class LoginRealizeManager {
 
                         @Override
                         public void onError(Throwable e) {
-
+                            mListener.onState((Activity) context,
+                                    LoginResult.failOf(ExceptionHelper.handleException(e)));
                         }
 
                         @Override
@@ -645,7 +656,8 @@ public class LoginRealizeManager {
 
                         @Override
                         public void onError(Throwable e) {
-
+                            mListener.onState((Activity) context,
+                                    LoginResult.failOf(ExceptionHelper.handleException(e)));
                         }
 
                         @Override
@@ -707,7 +719,8 @@ public class LoginRealizeManager {
 
                         @Override
                         public void onError(Throwable e) {
-
+                            mListener.onState((Activity) context,
+                                    LoginResult.failOf(ExceptionHelper.handleException(e)));
                         }
 
                         @Override
@@ -766,7 +779,8 @@ public class LoginRealizeManager {
 
                         @Override
                         public void onError(Throwable e) {
-
+                            mListener.onState((Activity) context,
+                                    LoginResult.failOf(ExceptionHelper.handleException(e)));
                         }
 
                         @Override
