@@ -19,5 +19,8 @@ public class Constants {
     public static final String QQ_TOKEN_TIMEOUT = "QQ_TOKEN_TIMEOUT";
     /***微信的AccessToken*/
     public static final String WE_CHAT_ACCESS_TOKEN = "WE_CHAT_ACCESS_TOKEN";
-
+    /***异常*/
+    public static final String MSG_EXCEPTION_NAME = "MSG_EXCEPTION_NAME";
+    /***异常*/
+    public static final String MSG_SEND_EXCEPTION = "MSG_SEND_EXCEPTION";
 }

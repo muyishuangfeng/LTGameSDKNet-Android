@@ -1,7 +1,12 @@
 package com.sdk.ltgame.ltnet.net.retrofit;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 
+import com.gentop.ltgame.ltgamesdkcore.common.LTGameOptions;
+import com.gentop.ltgame.ltgamesdkcore.common.LTGameSdk;
+import com.sdk.ltgame.ltnet.base.Constants;
 import com.sdk.ltgame.ltnet.net.conver.GsonConverterFactory;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -16,6 +21,7 @@ public class RetrofitClient implements BaseApi {
     private volatile static Retrofit retrofit = null;
     private Retrofit.Builder retrofitBuilder = new Retrofit.Builder();
     private OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
+    private Activity activity;
 
     public RetrofitClient(String baseUrl) {
         retrofitBuilder.addConverterFactory(ScalarsConverterFactory.create())
@@ -31,7 +37,8 @@ public class RetrofitClient implements BaseApi {
      * @return Retrofit对象
      */
     @Override
-    public Retrofit getRetrofit() {
+    public Retrofit getRetrofit(Activity activity) {
+        this.activity=activity;
         if (retrofit == null) {
             //锁定代码块
             synchronized (RetrofitClient.class) {
@@ -68,7 +75,17 @@ public class RetrofitClient implements BaseApi {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-                Log.e("ApiUrl", "--->" + message);
+                String result = "";
+                if (message.contains("HTTP FAILED")) {
+                    result = message.substring(message.indexOf("HTTP FAILED"), message.length());
+                }
+                Intent intent = new Intent(Constants.MSG_SEND_EXCEPTION);
+                intent.putExtra(Constants.MSG_EXCEPTION_NAME, result);
+                activity.sendBroadcast(intent);
+                LTGameOptions options = LTGameSdk.options();
+                if (options.isDebug()) {
+                    Log.e("ApiUrl", "--->" + message);
+                }
             }
         });
         loggingInterceptor.setLevel(level);

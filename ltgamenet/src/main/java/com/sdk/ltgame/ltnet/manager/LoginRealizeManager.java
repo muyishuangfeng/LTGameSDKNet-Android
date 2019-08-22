@@ -59,7 +59,7 @@ public class LoginRealizeManager {
             map.put("gps_adid", options.getAdID());
             map.put("platform_id", options.getPackageID());
 
-            Api.getInstance(options.getBaseUrl())
+            Api.getInstance((Activity) context,options.getBaseUrl())
                     .googleLogin(options.getLtAppId(), LTToken, (int) LTTime, map)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -135,7 +135,7 @@ public class LoginRealizeManager {
             map.put("adid", "");
             map.put("gps_adid", options.getAdID());
             map.put("platform_id", options.getPackageID());
-            Api.getInstance(options.getBaseUrl())
+            Api.getInstance((Activity) context,options.getBaseUrl())
                     .faceBookLogin(options.getLtAppId(), LTToken, (int) LTTime, map)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -215,7 +215,7 @@ public class LoginRealizeManager {
                     .create(okhttp3.MediaType.parse("application/json; charset=utf-8"), json);
             if (!TextUtils.isEmpty(PreferencesUtils.getString(context, Constants.USER_API_TOKEN))) {
                 String authorization = "Bearer " + PreferencesUtils.getString(context, Constants.USER_API_TOKEN);
-                Api.getInstance(options.getBaseUrl())
+                Api.getInstance(context,options.getBaseUrl())
                         .createOrder(options.getLtAppId(), LTToken, (int) LTTime, authorization,
                                 requestBody)
                         .subscribeOn(Schedulers.io())
@@ -276,7 +276,7 @@ public class LoginRealizeManager {
 
             String json = new Gson().toJson(params);//要传递的json
             final RequestBody requestBody = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), json);
-            Api.getInstance(options.getBaseUrl())
+            Api.getInstance((Activity) context,options.getBaseUrl())
                     .googlePlay(options.getLtAppId(), LTToken, (int) LTTime, requestBody)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -327,7 +327,7 @@ public class LoginRealizeManager {
             String json = new Gson().toJson(params);//要传递的json
             final RequestBody requestBody = RequestBody.create(okhttp3.MediaType
                     .parse("application/json; charset=utf-8"), json);
-            Api.getInstance(options.getBaseUrl())
+            Api.getInstance((Activity) context,options.getBaseUrl())
                     .oneStorePlay(options.getLtAppId(), LTToken, (int) LTTime, requestBody)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -359,7 +359,7 @@ public class LoginRealizeManager {
     /**
      * 自动登录验证
      */
-    public static void autoLoginCheck(String mBaseUrl, String mLtAppID,
+    public static void autoLoginCheck(Context context,String mBaseUrl, String mLtAppID,
                                       String mLtAppKey, String mLtUid, String mLTUidToken,
                                       String mPackageName, final OnAutoCheckLoginListener mListener) {
         if (!TextUtils.isEmpty(mLtUid) &&
@@ -377,7 +377,7 @@ public class LoginRealizeManager {
             String json = new Gson().toJson(params);//要传递的json
             final RequestBody requestBody = RequestBody.create(okhttp3.MediaType
                     .parse("application/json; charset=utf-8"), json);
-            Api.getInstance(mBaseUrl)
+            Api.getInstance((Activity) context,mBaseUrl)
                     .autoLogin(mLtAppID, LTToken, (int) LTTime, requestBody)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -430,7 +430,7 @@ public class LoginRealizeManager {
                 !TextUtils.isEmpty(phone)) {
             long LTTime = System.currentTimeMillis() / 1000L;
             String LTToken = MD5Util.md5Decode("GET" + options.getLtAppId() + LTTime + options.getLtAppKey());
-            Api.getInstance(options.getBaseUrl())
+            Api.getInstance(context,options.getBaseUrl())
                     .getAuthenCode(options.getLtAppId(), LTToken, (int) LTTime, phone)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -496,7 +496,7 @@ public class LoginRealizeManager {
             params.put("password", password);
             params.put("adid", adID);
 
-            Api.getInstance(options.getBaseUrl())
+            Api.getInstance(context,options.getBaseUrl())
                     .register(options.getLtAppId(), LTToken, (int) LTTime, params)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -554,7 +554,7 @@ public class LoginRealizeManager {
             Map<String, Object> map = new WeakHashMap<>();
             map.put("phone", phone);
             map.put("password", password);
-            Api.getInstance(options.getBaseUrl())
+            Api.getInstance(context,options.getBaseUrl())
                     .login(options.getLtAppId(), LTToken, (int) LTTime, map)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -618,7 +618,7 @@ public class LoginRealizeManager {
             map.put("phone", phone);
             map.put("auth_code", authCode);
             map.put("password", password);
-            Api.getInstance(options.getBaseUrl())
+            Api.getInstance(context,options.getBaseUrl())
                     .updatePassword(options.getLtAppId(), LTToken, (int) LTTime, map)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -680,7 +680,7 @@ public class LoginRealizeManager {
             map.put("access_token", accessToken);
             map.put("open_id", openID);
             map.put("adid", adid);
-            Api.getInstance(options.getBaseUrl())
+            Api.getInstance(context,options.getBaseUrl())
                     .qqLogin(options.getLtAppId(), LTToken, (int) LTTime, map)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -739,7 +739,7 @@ public class LoginRealizeManager {
             Map<String, Object> map = new WeakHashMap<>();
             map.put("access_token", accessToken);
             map.put("adid", adid);
-            Api.getInstance(options.getBaseUrl())
+            Api.getInstance(context,options.getBaseUrl())
                     .weChatLogin(options.getLtAppId(), LTToken, (int) LTTime, map)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -781,14 +781,14 @@ public class LoginRealizeManager {
      * 获取微信AccessToken
      * <p>
      */
-    public static void getWXAccessToken(String baseUrl, String appid,
+    public static void getWXAccessToken(Context context,String baseUrl, String appid,
                                         String secret, String code,
                                         final OnWeChatAccessTokenListener<WeChatAccessToken> mListener) {
         if (!TextUtils.isEmpty(baseUrl) &&
                 !TextUtils.isEmpty(appid) &&
                 !TextUtils.isEmpty(secret) &&
                 !TextUtils.isEmpty(code)) {
-            Api.getInstance(baseUrl)
+            Api.getInstance((Activity) context,baseUrl)
                     .getWXAccessToken(appid, secret, code, "authorization_code")
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -830,13 +830,13 @@ public class LoginRealizeManager {
      * 刷新微信AccessToken
      * <p>
      */
-    public static void refreshWXAccessToken(String baseUrl, String appid,
+    public static void refreshWXAccessToken(Context context,String baseUrl, String appid,
                                             String refresh_token,
                                             final OnWeChatAccessTokenListener<WeChatAccessToken> mListener) {
         if (!TextUtils.isEmpty(baseUrl) &&
                 !TextUtils.isEmpty(appid)&&
                 !TextUtils.isEmpty(refresh_token)) {
-            Api.getInstance(baseUrl)
+            Api.getInstance((Activity) context,baseUrl)
                     .refreshWXAccessToken(appid, "refresh_token",  refresh_token)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -878,10 +878,10 @@ public class LoginRealizeManager {
      * 验证微信AccessToken
      * <p>
      */
-    public static void authAccessToken(String access_token,
+    public static void authAccessToken(Context context,String access_token,
                                        final OnWeChatAccessTokenListener<AuthWXModel> mListener) {
         if (!TextUtils.isEmpty(access_token)) {
-            Api.getInstance("https://api.weixin.qq.com/cgi-bin/getcallbackip")
+            Api.getInstance((Activity) context,"https://api.weixin.qq.com/cgi-bin/getcallbackip")
                     .authToken(access_token)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
