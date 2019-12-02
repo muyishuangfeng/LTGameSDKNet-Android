@@ -217,7 +217,7 @@ public interface RetrofitService {
      */
     @Headers({"Content-Type:application/json",
             "Accept:application/json"})
-    @POST("/api/auth/account-bind")
+    @POST("/api/auth/login-visitors-bind")
     Observable<BaseEntry<ResultModel>> bindAccount(@Header("LT-AppID") String LTAppID,
                                                   @Header("LT-Token") String LTToken,
                                                   @Header("LT-T") int LTTime,
