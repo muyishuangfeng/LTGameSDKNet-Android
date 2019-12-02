@@ -23,4 +23,9 @@ public class Constants {
     public static final String MSG_EXCEPTION_NAME = "MSG_EXCEPTION_NAME";
     /***异常*/
     public static final String MSG_SEND_EXCEPTION = "MSG_SEND_EXCEPTION";
+    /***游客标记*/
+    public static final String USER_GUEST_FLAG = "USER_GUEST_FLAG";
+    /***绑定标记*/
+    public static final String USER_BIND_FLAG = "USER_BIND_FLAG";
+
 }

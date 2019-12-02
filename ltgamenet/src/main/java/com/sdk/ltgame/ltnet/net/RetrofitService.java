@@ -200,4 +200,27 @@ public interface RetrofitService {
      */
     @POST
     Observable<AuthWXModel> authToken(@Query("access_token") String access_token);
+
+    /**
+     * 游客登录验证
+     */
+    @Headers({"Content-Type:application/json",
+            "Accept:application/json"})
+    @POST("/api/auth/login-visitors")
+    Observable<BaseEntry<ResultModel>> guestLogin(@Header("LT-AppID") String LTAppID,
+                                                 @Header("LT-Token") String LTToken,
+                                                 @Header("LT-T") int LTTime,
+                                                 @Body Map<String, Object> map);
+
+    /**
+     * 绑定账户
+     */
+    @Headers({"Content-Type:application/json",
+            "Accept:application/json"})
+    @POST("/api/auth/account-bind")
+    Observable<BaseEntry<ResultModel>> bindAccount(@Header("LT-AppID") String LTAppID,
+                                                  @Header("LT-Token") String LTToken,
+                                                  @Header("LT-T") int LTTime,
+                                                  @Body Map<String, Object> map);
+
 }
