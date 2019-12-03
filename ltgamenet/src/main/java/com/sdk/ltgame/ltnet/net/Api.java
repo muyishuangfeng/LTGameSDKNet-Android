@@ -10,7 +10,7 @@ public class Api extends RetrofitClient {
     //测试服务器
     public static final String TEST_SERVER_URL = "http://sdk.aktgo.com";
     //正式服务器
-    public static final String FORMAL_SERVER_URL = "http://gco.appcpi.com";
+    public static final String FORMAL_SERVER_URL = "http://login.gdpgold.com";
 
 
     private Api(String baseUrl) {
