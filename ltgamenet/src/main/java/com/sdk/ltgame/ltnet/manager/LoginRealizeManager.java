@@ -3,11 +3,9 @@ package com.sdk.ltgame.ltnet.manager;
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.sdk.ltgame.ltnet.base.Constants;
 import com.sdk.ltgame.ltnet.impl.OnAutoCheckLoginListener;
-import com.sdk.ltgame.ltnet.impl.OnLoginSuccessListener;
 import com.sdk.ltgame.ltnet.impl.OnWeChatAccessTokenListener;
 import com.sdk.ltgame.ltnet.model.AuthWXModel;
 import com.sdk.ltgame.ltnet.model.WeChatAccessToken;
