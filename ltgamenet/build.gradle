@@ -5,7 +5,7 @@ group='com.github.muyishuangfeng' //必加,com.github.<用户名>(也就是你Gt
 android {
     compileSdkVersion 28
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 18
         targetSdkVersion 28
         javaCompileOptions {
             annotationProcessorOptions {
