@@ -1175,6 +1175,11 @@ public class LoginRealizeManager {
                                         }
                                     }
 
+                                }else {
+                                    if (mListener != null) {
+                                        mListener.onState((Activity) context,
+                                                LoginResult.failOf(LTGameError.make(result.getCode(),result.getMsg())));
+                                    }
                                 }
                             }
                         }
