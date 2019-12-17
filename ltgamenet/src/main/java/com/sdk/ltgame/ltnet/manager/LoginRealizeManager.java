@@ -1068,6 +1068,34 @@ public class LoginRealizeManager {
                                         }
                                     }
 
+                                }else if (result.getCode() == 403) {
+                                    if (result.getData() != null) {
+                                        if (mListener != null) {
+                                            BaseEntry<ResultModel> baseEntry=new BaseEntry<>();
+                                            baseEntry.setResult(result.getResult());
+                                            baseEntry.setCode(result.getCode());
+                                            baseEntry.setData(result.getData());
+                                            baseEntry.setMsg(result.getMsg());
+                                            mListener.onState((Activity) context, LoginResult.successOf(baseEntry));
+                                        }
+                                        if (!TextUtils.isEmpty(result.getData().getApi_token())) {
+                                            PreferencesUtils.putString(context, Constants.USER_API_TOKEN,
+                                                    result.getData().getApi_token());
+                                        }
+                                        if (!TextUtils.isEmpty(result.getData().getLt_uid())) {
+                                            PreferencesUtils.putString(context, Constants.USER_LT_UID,
+                                                    result.getData().getLt_uid());
+                                        }
+                                        if (!TextUtils.isEmpty(result.getData().getLt_uid_token())) {
+                                            PreferencesUtils.putString(context, Constants.USER_LT_UID_TOKEN,
+                                                    result.getData().getLt_uid_token());
+                                        }
+                                    }
+                                }else {
+                                    if (mListener != null) {
+                                        mListener.onState((Activity) context,
+                                                LoginResult.failOf(LTGameError.make(result.getMsg())));
+                                    }
                                 }
                             }
                         }
