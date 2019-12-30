@@ -3,7 +3,6 @@ package com.sdk.ltgame.ltnet.manager;
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.sdk.ltgame.ltnet.base.Constants;
 import com.sdk.ltgame.ltnet.impl.OnAutoCheckLoginListener;
@@ -58,14 +57,14 @@ public class LoginRealizeManager {
             map.put("adid", options.getAdID());
             map.put("gps_adid", options.getAdID());
             map.put("platform_id", options.getPackageID());
-            String baseUrl="";
+            String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
             } else {
                 baseUrl = Api.FORMAL_SERVER_URL;
             }
 
-            Api.getInstance((Activity) context,baseUrl)
+            Api.getInstance((Activity) context, baseUrl)
                     .googleLogin(options.getLtAppId(), LTToken, (int) LTTime, map)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -80,7 +79,16 @@ public class LoginRealizeManager {
                             if (result != null) {
                                 if (result.getCode() == 200) {
                                     if (mListener != null) {
-                                        mListener.onState((Activity) context, LoginResult.successOf(result));
+                                        int code = 0;
+                                        BaseEntry<ResultModel> baseEntry = new BaseEntry<>();
+                                        baseEntry.setResult(result.getResult());
+                                        if (result.getData().getLt_type().equals("register")) {
+                                            code = Constants.USER_REGISTER_GOOGLE_CODE;
+                                        }
+                                        baseEntry.setCode(code);
+                                        baseEntry.setData(result.getData());
+                                        baseEntry.setMsg(result.getMsg());
+                                        mListener.onState((Activity) context, LoginResult.successOf(baseEntry));
                                     }
                                     if (!TextUtils.isEmpty(result.getData().getApi_token())) {
                                         PreferencesUtils.putString(context, Constants.USER_API_TOKEN,
@@ -138,18 +146,19 @@ public class LoginRealizeManager {
             String LTToken = MD5Util.md5Decode("POST" + options.getLtAppId() + LTTime + options.getLtAppKey());
             Map<String, Object> map = new WeakHashMap<>();
             map.put("access_token", accessToken);
+            map.put("platform", 2);
             map.put("adid", options.getAdID());
             map.put("gps_adid", options.getAdID());
             map.put("platform_id", options.getPackageID());
 
-            String baseUrl="";
+            String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
             } else {
                 baseUrl = Api.FORMAL_SERVER_URL;
             }
 
-            Api.getInstance((Activity) context,baseUrl)
+            Api.getInstance((Activity) context, baseUrl)
                     .faceBookLogin(options.getLtAppId(), LTToken, (int) LTTime, map)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -164,7 +173,16 @@ public class LoginRealizeManager {
                             if (result != null) {
                                 if (result.getCode() == 200) {
                                     if (mListener != null) {
-                                        mListener.onState((Activity) context, LoginResult.successOf(result));
+                                        int code = 0;
+                                        BaseEntry<ResultModel> baseEntry = new BaseEntry<>();
+                                        baseEntry.setResult(result.getResult());
+                                        if (result.getData().getLt_type().equals("register")) {
+                                            code = Constants.USER_REGISTER_FACEBOOK_CODE;
+                                        }
+                                        baseEntry.setCode(code);
+                                        baseEntry.setData(result.getData());
+                                        baseEntry.setMsg(result.getMsg());
+                                        mListener.onState((Activity) context, LoginResult.successOf(baseEntry));
                                     }
                                     if (!TextUtils.isEmpty(result.getData().getApi_token())) {
                                         PreferencesUtils.putString(context, Constants.USER_API_TOKEN,
@@ -215,9 +233,12 @@ public class LoginRealizeManager {
         if (map != null &&
                 !TextUtils.isEmpty(options.getLtAppId()) &&
                 !TextUtils.isEmpty(options.getPackageID()) &&
+                !TextUtils.isEmpty(options.getAdID()) &&
                 !TextUtils.isEmpty(options.getLtAppKey())) {
             Map<String, Object> params = new WeakHashMap<>();
             params.put("package_id", options.getPackageID());
+            map.put("platform", 2);
+            map.put("adid", options.getAdID());
             params.put("gid", mProductID);
             params.put("custom", map);
             long LTTime = System.currentTimeMillis() / 1000L;
@@ -226,7 +247,7 @@ public class LoginRealizeManager {
             String json = new Gson().toJson(params);//要传递的json
             final RequestBody requestBody = RequestBody
                     .create(okhttp3.MediaType.parse("application/json; charset=utf-8"), json);
-            String baseUrl="";
+            String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
             } else {
@@ -235,7 +256,7 @@ public class LoginRealizeManager {
             if (!TextUtils.isEmpty(PreferencesUtils.getString(context, Constants.USER_API_TOKEN))) {
                 String authorization = "Bearer " + PreferencesUtils.getString(context, Constants.USER_API_TOKEN);
 
-                Api.getInstance(context,baseUrl)
+                Api.getInstance(context, baseUrl)
                         .createOrder(options.getLtAppId(), LTToken, (int) LTTime, authorization,
                                 requestBody)
                         .subscribeOn(Schedulers.io())
@@ -284,11 +305,14 @@ public class LoginRealizeManager {
         if (!TextUtils.isEmpty(purchaseToken) &&
                 !TextUtils.isEmpty(orderID) &&
                 !TextUtils.isEmpty(options.getLtAppId()) &&
+                !TextUtils.isEmpty(options.getAdID()) &&
                 !TextUtils.isEmpty(options.getLtAppKey())) {
             long LTTime = System.currentTimeMillis() / 1000L;
             String LTToken = MD5Util.md5Decode("POST" + options.getLtAppId() + LTTime
                     + options.getLtAppKey());
             Map<String, Object> params = new WeakHashMap<>();
+            params.put("platform", 2);
+            params.put("adid", options.getAdID());
             params.put("purchase_token", purchaseToken);
             params.put("lt_order_id", orderID);
             params.put("pay_test", mPayTest);
@@ -296,14 +320,14 @@ public class LoginRealizeManager {
             String json = new Gson().toJson(params);//要传递的json
             final RequestBody requestBody = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), json);
 
-            String baseUrl="";
+            String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
             } else {
                 baseUrl = Api.FORMAL_SERVER_URL;
             }
 
-            Api.getInstance((Activity) context,baseUrl)
+            Api.getInstance((Activity) context, baseUrl)
                     .googlePlay(options.getLtAppId(), LTToken, (int) LTTime, requestBody)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -342,6 +366,7 @@ public class LoginRealizeManager {
         LTGameOptions options = LTGameSdk.options();
         if (!TextUtils.isEmpty(options.getLtAppId()) &&
                 !TextUtils.isEmpty(options.getLtAppKey()) &&
+                !TextUtils.isEmpty(options.getAdID()) &&
                 !TextUtils.isEmpty(orderID) &&
                 !TextUtils.isEmpty(purchaseToken) &&
                 mPayTest != -1) {
@@ -351,18 +376,20 @@ public class LoginRealizeManager {
             params.put("purchase_id", purchaseToken);
             params.put("lt_order_id", orderID);
             params.put("pay_test", mPayTest);
+            params.put("platform", 2);
+            params.put("adid", options.getAdID());
 
             String json = new Gson().toJson(params);//要传递的json
             final RequestBody requestBody = RequestBody.create(okhttp3.MediaType
                     .parse("application/json; charset=utf-8"), json);
-            String baseUrl="";
+            String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
             } else {
                 baseUrl = Api.FORMAL_SERVER_URL;
             }
 
-            Api.getInstance((Activity) context,baseUrl)
+            Api.getInstance((Activity) context, baseUrl)
                     .oneStorePlay(options.getLtAppId(), LTToken, (int) LTTime, requestBody)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -399,11 +426,12 @@ public class LoginRealizeManager {
     public static void autoLoginCheck(Context context, String mLtAppID,
                                       String mLtAppKey, String mLtUid, String mLTUidToken,
                                       String mPackageName, final OnAutoCheckLoginListener mListener) {
-        LTGameOptions options=LTGameSdk.options();
-        String baseUrl="";
+        LTGameOptions options = LTGameSdk.options();
+        String baseUrl = "";
         if (!TextUtils.isEmpty(mLtUid) &&
                 !TextUtils.isEmpty(mLTUidToken) &&
                 !TextUtils.isEmpty(mPackageName) &&
+                !TextUtils.isEmpty(options.getAdID()) &&
                 !TextUtils.isEmpty(mLtAppID) &&
                 !TextUtils.isEmpty(mLtAppKey)) {
             long LTTime = System.currentTimeMillis() / 1000L;
@@ -412,6 +440,8 @@ public class LoginRealizeManager {
             params.put("lt_uid", mLtUid);
             params.put("lt_uid_token", mLTUidToken);
             params.put("platform_id", mPackageName);
+            params.put("platform", 2);
+            params.put("adid", options.getAdID());
             String json = new Gson().toJson(params);//要传递的json
             final RequestBody requestBody = RequestBody.create(okhttp3.MediaType
                     .parse("application/json; charset=utf-8"), json);
@@ -422,7 +452,7 @@ public class LoginRealizeManager {
                 baseUrl = Api.FORMAL_SERVER_URL;
             }
 
-            Api.getInstance((Activity) context,baseUrl)
+            Api.getInstance((Activity) context, baseUrl)
                     .autoLogin(mLtAppID, LTToken, (int) LTTime, requestBody)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -448,9 +478,9 @@ public class LoginRealizeManager {
 
                         @Override
                         public void onError(Throwable e) {
-                           if (mListener!=null){
-                               mListener.onCheckedException(ExceptionHelper.handleException(e));
-                           }
+                            if (mListener != null) {
+                                mListener.onCheckedException(ExceptionHelper.handleException(e));
+                            }
                         }
 
                         @Override
@@ -473,19 +503,19 @@ public class LoginRealizeManager {
         LTGameOptions options = LTGameSdk.options();
         if (!TextUtils.isEmpty(options.getLtAppId()) &&
                 !TextUtils.isEmpty(options.getLtAppKey()) &&
+                !TextUtils.isEmpty(options.getAdID()) &&
                 !TextUtils.isEmpty(phone)) {
             long LTTime = System.currentTimeMillis() / 1000L;
             String LTToken = MD5Util.md5Decode("GET" + options.getLtAppId() + LTTime + options.getLtAppKey());
 
-            String baseUrl="";
+            String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
             } else {
                 baseUrl = Api.FORMAL_SERVER_URL;
             }
-
-            Api.getInstance(context,baseUrl)
-                    .getAuthenCode(options.getLtAppId(), LTToken, (int) LTTime, phone)
+            Api.getInstance(context, baseUrl)
+                    .getAuthenCode(options.getLtAppId(), LTToken, (int) LTTime, phone, options.getAdID(), 2)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<BaseEntry<ResultModel>>() {
@@ -549,13 +579,14 @@ public class LoginRealizeManager {
             params.put("auth_code", authCode);
             params.put("password", password);
             params.put("adid", adID);
-            String baseUrl="";
+            params.put("platform", 2);
+            String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
             } else {
                 baseUrl = Api.FORMAL_SERVER_URL;
             }
-            Api.getInstance(context,baseUrl)
+            Api.getInstance(context, baseUrl)
                     .register(options.getLtAppId(), LTToken, (int) LTTime, params)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -606,6 +637,7 @@ public class LoginRealizeManager {
         LTGameOptions options = LTGameSdk.options();
         if (!TextUtils.isEmpty(options.getLtAppId()) &&
                 !TextUtils.isEmpty(options.getLtAppKey()) &&
+                !TextUtils.isEmpty(options.getAdID()) &&
                 !TextUtils.isEmpty(phone) &&
                 !TextUtils.isEmpty(password)) {
             long LTTime = System.currentTimeMillis() / 1000L;
@@ -613,15 +645,17 @@ public class LoginRealizeManager {
             Map<String, Object> map = new WeakHashMap<>();
             map.put("phone", phone);
             map.put("password", password);
+            map.put("adid", options.getAdID());
+            map.put("platform", 2);
 
-            String baseUrl="";
+            String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
             } else {
                 baseUrl = Api.FORMAL_SERVER_URL;
             }
 
-            Api.getInstance(context,baseUrl)
+            Api.getInstance(context, baseUrl)
                     .login(options.getLtAppId(), LTToken, (int) LTTime, map)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -676,6 +710,7 @@ public class LoginRealizeManager {
         LTGameOptions options = LTGameSdk.options();
         if (!TextUtils.isEmpty(options.getLtAppId()) &&
                 !TextUtils.isEmpty(options.getLtAppKey()) &&
+                !TextUtils.isEmpty(options.getAdID()) &&
                 !TextUtils.isEmpty(phone) &&
                 !TextUtils.isEmpty(password) &&
                 authCode != 0) {
@@ -685,15 +720,18 @@ public class LoginRealizeManager {
             map.put("phone", phone);
             map.put("auth_code", authCode);
             map.put("password", password);
+            map.put("adid", options.getAdID());
+            map.put("platform", 2);
 
-            String baseUrl="";
+
+            String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
             } else {
                 baseUrl = Api.FORMAL_SERVER_URL;
             }
 
-            Api.getInstance(context,baseUrl)
+            Api.getInstance(context, baseUrl)
                     .updatePassword(options.getLtAppId(), LTToken, (int) LTTime, map)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -755,15 +793,16 @@ public class LoginRealizeManager {
             map.put("access_token", accessToken);
             map.put("open_id", openID);
             map.put("adid", adid);
+            map.put("platform", 2);
 
-            String baseUrl="";
+            String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
             } else {
                 baseUrl = Api.FORMAL_SERVER_URL;
             }
 
-            Api.getInstance(context,baseUrl)
+            Api.getInstance(context, baseUrl)
                     .qqLogin(options.getLtAppId(), LTToken, (int) LTTime, map)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -822,14 +861,16 @@ public class LoginRealizeManager {
             Map<String, Object> map = new WeakHashMap<>();
             map.put("access_token", accessToken);
             map.put("adid", adid);
-            String baseUrl="";
+            map.put("platform", 2);
+
+            String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
             } else {
                 baseUrl = Api.FORMAL_SERVER_URL;
             }
 
-            Api.getInstance(context,baseUrl)
+            Api.getInstance(context, baseUrl)
                     .weChatLogin(options.getLtAppId(), LTToken, (int) LTTime, map)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -872,7 +913,7 @@ public class LoginRealizeManager {
      * 获取微信AccessToken
      * <p>
      */
-    public static void getWXAccessToken(Context context,String baseUrl, String appid,
+    public static void getWXAccessToken(Context context, String baseUrl, String appid,
                                         String secret, String code,
                                         final OnWeChatAccessTokenListener<WeChatAccessToken> mListener) {
         if (!TextUtils.isEmpty(baseUrl) &&
@@ -880,7 +921,7 @@ public class LoginRealizeManager {
                 !TextUtils.isEmpty(secret) &&
                 !TextUtils.isEmpty(code)) {
 
-            Api.getInstance((Activity) context,baseUrl)
+            Api.getInstance((Activity) context, baseUrl)
                     .getWXAccessToken(appid, secret, code, "authorization_code")
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -922,14 +963,14 @@ public class LoginRealizeManager {
      * 刷新微信AccessToken
      * <p>
      */
-    public static void refreshWXAccessToken(Context context,String baseUrl, String appid,
+    public static void refreshWXAccessToken(Context context, String baseUrl, String appid,
                                             String refresh_token,
                                             final OnWeChatAccessTokenListener<WeChatAccessToken> mListener) {
         if (!TextUtils.isEmpty(baseUrl) &&
-                !TextUtils.isEmpty(appid)&&
+                !TextUtils.isEmpty(appid) &&
                 !TextUtils.isEmpty(refresh_token)) {
-            Api.getInstance((Activity) context,baseUrl)
-                    .refreshWXAccessToken(appid, "refresh_token",  refresh_token)
+            Api.getInstance((Activity) context, baseUrl)
+                    .refreshWXAccessToken(appid, "refresh_token", refresh_token)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<WeChatAccessToken>() {
@@ -970,10 +1011,10 @@ public class LoginRealizeManager {
      * 验证微信AccessToken
      * <p>
      */
-    public static void authAccessToken(Context context,String access_token,
+    public static void authAccessToken(Context context, String access_token,
                                        final OnWeChatAccessTokenListener<AuthWXModel> mListener) {
         if (!TextUtils.isEmpty(access_token)) {
-            Api.getInstance((Activity) context,"https://api.weixin.qq.com/cgi-bin/getcallbackip")
+            Api.getInstance((Activity) context, "https://api.weixin.qq.com/cgi-bin/getcallbackip")
                     .authToken(access_token)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -1012,12 +1053,11 @@ public class LoginRealizeManager {
     }
 
 
-
     /**
      * 游客登录验证
      */
     public static void guestLogin(final Context context, final OnLoginStateListener mListener) {
-        String baseUrl="";
+        String baseUrl = "";
         LTGameOptions options = LTGameSdk.options();
         if (!TextUtils.isEmpty(options.getLtAppId()) &&
                 !TextUtils.isEmpty(options.getLtAppKey()) &&
@@ -1037,7 +1077,7 @@ public class LoginRealizeManager {
             params.put("platform_id", options.getPackageID());
 
 
-            Api.getInstance((Activity) context,baseUrl)
+            Api.getInstance((Activity) context, baseUrl)
                     .guestLogin(options.getLtAppId(), LTToken, (int) LTTime, params)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -1053,28 +1093,13 @@ public class LoginRealizeManager {
                                 if (result.getCode() == 200) {
                                     if (result.getData() != null) {
                                         if (mListener != null) {
-                                            mListener.onState((Activity) context, LoginResult.successOf(result));
-                                        }
-                                        if (!TextUtils.isEmpty(result.getData().getApi_token())) {
-                                            PreferencesUtils.putString(context, Constants.USER_API_TOKEN,
-                                                    result.getData().getApi_token());
-                                        }
-                                        if (!TextUtils.isEmpty(result.getData().getLt_uid())) {
-                                            PreferencesUtils.putString(context, Constants.USER_LT_UID,
-                                                    result.getData().getLt_uid());
-                                        }
-                                        if (!TextUtils.isEmpty(result.getData().getLt_uid_token())) {
-                                            PreferencesUtils.putString(context, Constants.USER_LT_UID_TOKEN,
-                                                    result.getData().getLt_uid_token());
-                                        }
-                                    }
-
-                                }else if (result.getCode() == 403) {
-                                    if (result.getData() != null) {
-                                        if (mListener != null) {
-                                            BaseEntry<ResultModel> baseEntry=new BaseEntry<>();
+                                            int code = 0;
+                                            BaseEntry<ResultModel> baseEntry = new BaseEntry<>();
                                             baseEntry.setResult(result.getResult());
-                                            baseEntry.setCode(result.getCode());
+                                            if (result.getData().getLt_type().equals("register")) {
+                                                code = Constants.USER_REGISTER_GUEST_CODE;
+                                            }
+                                            baseEntry.setCode(code);
                                             baseEntry.setData(result.getData());
                                             baseEntry.setMsg(result.getMsg());
                                             mListener.onState((Activity) context, LoginResult.successOf(baseEntry));
@@ -1092,7 +1117,8 @@ public class LoginRealizeManager {
                                                     result.getData().getLt_uid_token());
                                         }
                                     }
-                                }else {
+
+                                } else {
                                     if (mListener != null) {
                                         mListener.onState((Activity) context,
                                                 LoginResult.failOf(LTGameError.make(result.getMsg())));
@@ -1130,13 +1156,13 @@ public class LoginRealizeManager {
                 !TextUtils.isEmpty(options.getAdID())) {
             long LTTime = System.currentTimeMillis() / 1000L;
             String LTToken = MD5Util.md5Decode("POST" + options.getLtAppId() + LTTime + options.getLtAppKey());
-            String baseUrl="";
+            String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
             } else {
                 baseUrl = Api.FORMAL_SERVER_URL;
             }
-            Map<String, Object> params=new WeakHashMap<>();
+            Map<String, Object> params = new WeakHashMap<>();
             params.put("access_token", token);
             params.put("platform", 2);
             params.put("adid", options.getAdID());
@@ -1144,7 +1170,7 @@ public class LoginRealizeManager {
             params.put("platform_id", options.getPackageID());
             params.put("type", type);
 
-            Api.getInstance((Activity) context,baseUrl)
+            Api.getInstance((Activity) context, baseUrl)
                     .bindAccount(options.getLtAppId(), LTToken, (int) LTTime, params)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -1176,10 +1202,18 @@ public class LoginRealizeManager {
                                         }
                                     }
 
-                                }else {
+                                } else if (result.getCode() == 431) {
+                                    if (result.getData() != null) {
+                                        if (mListener != null) {
+                                            BaseEntry<ResultModel> baseEntry = new BaseEntry<>();
+                                            baseEntry.setCode(Constants.USER_ALREADY_BIND_CODE);
+                                            mListener.onState((Activity) context, LoginResult.successOf(baseEntry));
+                                        }
+                                    }
+                                } else {
                                     if (mListener != null) {
                                         mListener.onState((Activity) context,
-                                                LoginResult.failOf(LTGameError.make(result.getCode(),result.getMsg())));
+                                                LoginResult.failOf(LTGameError.make(result.getCode(), result.getMsg())));
                                     }
                                 }
                             }
@@ -1213,15 +1247,15 @@ public class LoginRealizeManager {
                 !TextUtils.isEmpty(options.getAdID())) {
             long LTTime = System.currentTimeMillis() / 1000L;
             String LTToken = MD5Util.md5Decode("POST" + options.getLtAppId() + LTTime + options.getLtAppKey());
-            String baseUrl="";
+            String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
             } else {
                 baseUrl = Api.FORMAL_SERVER_URL;
             }
-            Map<String, String> params=new WeakHashMap<>();
+            Map<String, String> params = new WeakHashMap<>();
             params.put("adid", options.getAdID());
-            Api.getInstance((Activity) context,baseUrl)
+            Api.getInstance((Activity) context, baseUrl)
                     .unBindAccount(options.getLtAppId(), LTToken, (int) LTTime, params)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -1253,10 +1287,10 @@ public class LoginRealizeManager {
                                         }
                                     }
 
-                                }else {
+                                } else {
                                     if (mListener != null) {
                                         mListener.onState((Activity) context,
-                                                LoginResult.failOf(LTGameError.make(result.getCode(),result.getMsg())));
+                                                LoginResult.failOf(LTGameError.make(result.getCode(), result.getMsg())));
                                     }
                                 }
                             }
@@ -1277,5 +1311,67 @@ public class LoginRealizeManager {
                     });
         }
     }
+
+
+    /**
+     * 绑定游戏角色
+     */
+    public static void bindRole(final Context context, String ltAppID, String ltAppKey, String adid,
+                                String roleID, String roleName,
+                                String roleSex, String roleUid, boolean isServerTest,
+                                final OnLoginStateListener mListener) {
+        if (!TextUtils.isEmpty(adid) &&
+                !TextUtils.isEmpty(ltAppID) &&
+                !TextUtils.isEmpty(ltAppKey) &&
+                !TextUtils.isEmpty(roleID) &&
+                !TextUtils.isEmpty(roleName) &&
+                !TextUtils.isEmpty(roleSex) &&
+                !TextUtils.isEmpty(roleUid)) {
+            long LTTime = System.currentTimeMillis() / 1000L;
+            String LTToken = MD5Util.md5Decode("POST" + ltAppID + LTTime + ltAppKey);
+            String baseUrl = "";
+            if (isServerTest) {
+                baseUrl = Api.TEST_SERVER_URL;
+            } else {
+                baseUrl = Api.FORMAL_SERVER_URL;
+            }
+            Map<String, Object> params = new WeakHashMap<>();
+            params.put("platform", 2);
+            params.put("adid", adid);
+            params.put("r_id", roleID);
+            params.put("r_name", roleName);
+            params.put("r_sex", roleSex);
+            params.put("r_uid", roleUid);
+            Api.getInstance((Activity) context, baseUrl)
+                    .bindRole(ltAppID, LTToken, (int) LTTime, params)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<BaseEntry<ResultModel>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onNext(BaseEntry<ResultModel> result) {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            if (mListener != null) {
+                                mListener.onState((Activity) context,
+                                        LoginResult.failOf(ExceptionHelper.handleException(e)));
+                            }
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+        }
+    }
+
 
 }

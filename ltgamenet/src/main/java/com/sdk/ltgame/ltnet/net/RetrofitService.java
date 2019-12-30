@@ -1,6 +1,7 @@
 package com.sdk.ltgame.ltnet.net;
 
 
+
 import com.sdk.ltgame.ltnet.model.AuthWXModel;
 import com.sdk.ltgame.ltnet.model.WeChatAccessToken;
 import com.gentop.ltgame.ltgamesdkcore.base.BaseEntry;
@@ -51,7 +52,9 @@ public interface RetrofitService {
     Observable<BaseEntry<ResultModel>> getAuthenCode(@Header("LT-AppID") String LTAppID,
                                                      @Header("LT-Token") String LTToken,
                                                      @Header("LT-T") int LTTime,
-                                                     @Query("phone") String phone);
+                                                     @Query("phone") String phone,
+                                                     @Query("adid") String adid,
+                                                     @Query("platform")int platform);
 
 
     /**
@@ -208,9 +211,9 @@ public interface RetrofitService {
             "Accept:application/json"})
     @POST("/api/auth/login-visitors")
     Observable<BaseEntry<ResultModel>> guestLogin(@Header("LT-AppID") String LTAppID,
-                                                 @Header("LT-Token") String LTToken,
-                                                 @Header("LT-T") int LTTime,
-                                                 @Body Map<String, Object> map);
+                                                  @Header("LT-Token") String LTToken,
+                                                  @Header("LT-T") int LTTime,
+                                                  @Body Map<String, Object> map);
 
     /**
      * 绑定账户
@@ -219,9 +222,9 @@ public interface RetrofitService {
             "Accept:application/json"})
     @POST("/api/auth/login-visitors-bind")
     Observable<BaseEntry<ResultModel>> bindAccount(@Header("LT-AppID") String LTAppID,
-                                                  @Header("LT-Token") String LTToken,
-                                                  @Header("LT-T") int LTTime,
-                                                  @Body Map<String, Object> map);
+                                                   @Header("LT-Token") String LTToken,
+                                                   @Header("LT-T") int LTTime,
+                                                   @Body Map<String, Object> map);
 
     /**
      * 解绑账户
@@ -233,5 +236,16 @@ public interface RetrofitService {
                                                      @Header("LT-Token") String LTToken,
                                                      @Header("LT-T") int LTTime,
                                                      @Body Map<String, String> map);
+
+    /**
+     * 绑定游戏角色
+     */
+    @Headers({"Content-Type:application/json",
+            "Accept:application/json"})
+    @POST("/api/auth/account-join-role")
+    Observable<BaseEntry<ResultModel>> bindRole(@Header("LT-AppID") String LTAppID,
+                                                @Header("LT-Token") String LTToken,
+                                                @Header("LT-T") int LTTime,
+                                                @Body Map<String, Object> map);
 
 }
