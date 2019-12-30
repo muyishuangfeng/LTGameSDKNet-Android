@@ -243,7 +243,7 @@ public interface RetrofitService {
     @Headers({"Content-Type:application/json",
             "Accept:application/json"})
     @POST("/api/auth/account-join-role")
-    Observable<BaseEntry<ResultModel>> bindRole(@Header("LT-AppID") String LTAppID,
+    Observable<BaseEntry> bindRole(@Header("LT-AppID") String LTAppID,
                                                 @Header("LT-Token") String LTToken,
                                                 @Header("LT-T") int LTTime,
                                                 @Body Map<String, Object> map);

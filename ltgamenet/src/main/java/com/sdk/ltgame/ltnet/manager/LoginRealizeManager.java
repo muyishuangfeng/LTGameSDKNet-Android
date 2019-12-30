@@ -1318,8 +1318,7 @@ public class LoginRealizeManager {
      */
     public static void bindRole(final Context context, String ltAppID, String ltAppKey, String adid,
                                 String roleID, String roleName,
-                                String roleSex, String roleUid, boolean isServerTest,
-                                final OnLoginStateListener mListener) {
+                                String roleSex, String roleUid, boolean isServerTest) {
         if (!TextUtils.isEmpty(adid) &&
                 !TextUtils.isEmpty(ltAppID) &&
                 !TextUtils.isEmpty(ltAppKey) &&
@@ -1346,23 +1345,20 @@ public class LoginRealizeManager {
                     .bindRole(ltAppID, LTToken, (int) LTTime, params)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<BaseEntry<ResultModel>>() {
+                    .subscribe(new Observer<BaseEntry>() {
                         @Override
                         public void onSubscribe(Disposable d) {
 
                         }
 
                         @Override
-                        public void onNext(BaseEntry<ResultModel> result) {
+                        public void onNext(BaseEntry result) {
 
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            if (mListener != null) {
-                                mListener.onState((Activity) context,
-                                        LoginResult.failOf(ExceptionHelper.handleException(e)));
-                            }
+
                         }
 
                         @Override
