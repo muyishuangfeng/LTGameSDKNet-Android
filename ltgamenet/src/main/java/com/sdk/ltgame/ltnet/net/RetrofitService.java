@@ -1,7 +1,6 @@
 package com.sdk.ltgame.ltnet.net;
 
 
-
 import com.sdk.ltgame.ltnet.model.AuthWXModel;
 import com.sdk.ltgame.ltnet.model.WeChatAccessToken;
 import com.gentop.ltgame.ltgamesdkcore.base.BaseEntry;
@@ -54,7 +53,7 @@ public interface RetrofitService {
                                                      @Header("LT-T") int LTTime,
                                                      @Query("phone") String phone,
                                                      @Query("adid") String adid,
-                                                     @Query("platform")int platform);
+                                                     @Query("platform") int platform);
 
 
     /**
@@ -244,8 +243,19 @@ public interface RetrofitService {
             "Accept:application/json"})
     @POST("/api/auth/account-join-role")
     Observable<BaseEntry> bindRole(@Header("LT-AppID") String LTAppID,
-                                                @Header("LT-Token") String LTToken,
-                                                @Header("LT-T") int LTTime,
-                                                @Body Map<String, Object> map);
+                                   @Header("LT-Token") String LTToken,
+                                   @Header("LT-T") int LTTime,
+                                   @Body Map<String, Object> map);
+
+    /**
+     * 提交信息
+     */
+    @Headers({"Content-Type:application/json",
+            "Accept:application/json"})
+    @POST("/api/other/join")
+    Observable<BaseEntry> uploadDevice(@Header("LT-AppID") String LTAppID,
+                                       @Header("LT-Token") String LTToken,
+                                       @Header("LT-T") int LTTime,
+                                       @Body Map<String, Object> map);
 
 }

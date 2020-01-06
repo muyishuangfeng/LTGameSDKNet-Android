@@ -1103,7 +1103,6 @@ public class LoginRealizeManager {
             params.put("platform_id", options.getPackageID());
 
 
-
             Api.getInstance((Activity) context, baseUrl)
                     .guestLogin(options.getLtAppId(), LTToken, (int) LTTime, params)
                     .subscribeOn(Schedulers.io())
@@ -1364,7 +1363,7 @@ public class LoginRealizeManager {
             Map<String, Object> params = new WeakHashMap<>();
             params.put("platform", 2);
             params.put("adid", adid);
-            params.put("gps_adid",adid);
+            params.put("gps_adid", adid);
             params.put("platform_id", AppUtil.getPackageName(context));
             params.put("r_id", roleID);
             params.put("r_name", roleName);
@@ -1398,5 +1397,74 @@ public class LoginRealizeManager {
         }
     }
 
+    /**
+     * 提交设备信息
+     */
+    public static void uploadDeviceInfo(final Context context, final OnLoginStateListener mListener) {
 
+        LTGameOptions options = LTGameSdk.options();
+        if (!TextUtils.isEmpty(options.getLtAppId()) &&
+                !TextUtils.isEmpty(options.getLtAppKey()) &&
+                !TextUtils.isEmpty(options.getAdID())) {
+            long LTTime = System.currentTimeMillis() / 1000L;
+            String LTToken = MD5Util.md5Decode("POST" + options.getLtAppId() + LTTime + options.getLtAppKey());
+            String baseUrl = "";
+            if (options.getISServerTest()) {
+                baseUrl = Api.TEST_SERVER_URL;
+            } else {
+                baseUrl = Api.FORMAL_SERVER_URL;
+            }
+            Map<String, Object> params = new WeakHashMap<>();
+            params.put("platform", 2);
+            params.put("adid", options.getAdID());
+            params.put("package_id", AppUtil.getPackageName(context));
+            params.put("device", AppUtil.getManufacturer());
+            params.put("system", AppUtil.getOSVersion());
+            params.put("district", AppUtil.getLocation());
+            params.put("lang", AppUtil.getLanguage());
+            params.put("gps_adid", options.getAdID());
+            Api.getInstance((Activity) context, baseUrl)
+                    .uploadDevice(options.getLtAppId(), LTToken, (int) LTTime, params)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<BaseEntry>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onNext(BaseEntry result) {
+                            if (result != null) {
+                                if (result.getCode() == 200) {
+                                    if (result.getData() != null) {
+                                        if (mListener != null) {
+                                            mListener.onState((Activity) context, LoginResult.stateOf(result));
+                                        }
+                                    }
+
+                                } else {
+                                    if (mListener != null) {
+                                        mListener.onState((Activity) context,
+                                                LoginResult.failOf(LTGameError.make(result.getCode(), result.getMsg())));
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            if (mListener != null) {
+                                mListener.onState((Activity) context,
+                                        LoginResult.failOf(ExceptionHelper.handleException(e)));
+                            }
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+        }
+    }
 }
