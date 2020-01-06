@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.gentop.ltgame.ltgamesdkcore.util.FileUtil;
 import com.sdk.ltgame.ltnet.base.Constants;
 import com.sdk.ltgame.ltnet.impl.OnAutoCheckLoginListener;
 import com.sdk.ltgame.ltnet.impl.OnWeChatAccessTokenListener;
@@ -11,6 +12,7 @@ import com.sdk.ltgame.ltnet.model.AuthWXModel;
 import com.sdk.ltgame.ltnet.model.WeChatAccessToken;
 import com.sdk.ltgame.ltnet.net.Api;
 import com.sdk.ltgame.ltnet.net.exception.ExceptionHelper;
+import com.sdk.ltgame.ltnet.util.AppUtil;
 import com.sdk.ltgame.ltnet.util.MD5Util;
 import com.sdk.ltgame.ltnet.util.PreferencesUtils;
 import com.gentop.ltgame.ltgamesdkcore.base.BaseEntry;
@@ -239,6 +241,8 @@ public class LoginRealizeManager {
             params.put("package_id", options.getPackageID());
             map.put("platform", 2);
             map.put("adid", options.getAdID());
+            map.put("gps_adid", options.getAdID());
+            map.put("platform_id", options.getPackageID());
             params.put("gid", mProductID);
             params.put("custom", map);
             long LTTime = System.currentTimeMillis() / 1000L;
@@ -313,6 +317,8 @@ public class LoginRealizeManager {
             Map<String, Object> params = new WeakHashMap<>();
             params.put("platform", 2);
             params.put("adid", options.getAdID());
+            params.put("gps_adid", options.getAdID());
+            params.put("platform_id", options.getPackageID());
             params.put("purchase_token", purchaseToken);
             params.put("lt_order_id", orderID);
             params.put("pay_test", mPayTest);
@@ -378,6 +384,8 @@ public class LoginRealizeManager {
             params.put("pay_test", mPayTest);
             params.put("platform", 2);
             params.put("adid", options.getAdID());
+            params.put("gps_adid", options.getAdID());
+            params.put("platform_id", options.getPackageID());
 
             String json = new Gson().toJson(params);//要传递的json
             final RequestBody requestBody = RequestBody.create(okhttp3.MediaType
@@ -442,6 +450,7 @@ public class LoginRealizeManager {
             params.put("platform_id", mPackageName);
             params.put("platform", 2);
             params.put("adid", options.getAdID());
+            params.put("gps_adid", options.getAdID());
             String json = new Gson().toJson(params);//要传递的json
             final RequestBody requestBody = RequestBody.create(okhttp3.MediaType
                     .parse("application/json; charset=utf-8"), json);
@@ -568,6 +577,8 @@ public class LoginRealizeManager {
         LTGameOptions options = LTGameSdk.options();
         if (!TextUtils.isEmpty(options.getLtAppId()) &&
                 !TextUtils.isEmpty(options.getLtAppKey()) &&
+                !TextUtils.isEmpty(options.getAdID()) &&
+                !TextUtils.isEmpty(options.getPackageID()) &&
                 !TextUtils.isEmpty(phone) &&
                 authCode != 0 &&
                 !TextUtils.isEmpty(password) &&
@@ -580,6 +591,8 @@ public class LoginRealizeManager {
             params.put("password", password);
             params.put("adid", adID);
             params.put("platform", 2);
+            params.put("gps_adid", options.getAdID());
+            params.put("platform_id", options.getPackageID());
             String baseUrl = "";
             if (options.getISServerTest()) {
                 baseUrl = Api.TEST_SERVER_URL;
@@ -638,6 +651,7 @@ public class LoginRealizeManager {
         if (!TextUtils.isEmpty(options.getLtAppId()) &&
                 !TextUtils.isEmpty(options.getLtAppKey()) &&
                 !TextUtils.isEmpty(options.getAdID()) &&
+                !TextUtils.isEmpty(options.getPackageID()) &&
                 !TextUtils.isEmpty(phone) &&
                 !TextUtils.isEmpty(password)) {
             long LTTime = System.currentTimeMillis() / 1000L;
@@ -647,6 +661,8 @@ public class LoginRealizeManager {
             map.put("password", password);
             map.put("adid", options.getAdID());
             map.put("platform", 2);
+            map.put("gps_adid", options.getAdID());
+            map.put("platform_id", options.getPackageID());
 
             String baseUrl = "";
             if (options.getISServerTest()) {
@@ -711,6 +727,7 @@ public class LoginRealizeManager {
         if (!TextUtils.isEmpty(options.getLtAppId()) &&
                 !TextUtils.isEmpty(options.getLtAppKey()) &&
                 !TextUtils.isEmpty(options.getAdID()) &&
+                !TextUtils.isEmpty(options.getPackageID()) &&
                 !TextUtils.isEmpty(phone) &&
                 !TextUtils.isEmpty(password) &&
                 authCode != 0) {
@@ -722,7 +739,8 @@ public class LoginRealizeManager {
             map.put("password", password);
             map.put("adid", options.getAdID());
             map.put("platform", 2);
-
+            map.put("gps_adid", options.getAdID());
+            map.put("platform_id", options.getPackageID());
 
             String baseUrl = "";
             if (options.getISServerTest()) {
@@ -784,6 +802,8 @@ public class LoginRealizeManager {
         LTGameOptions options = LTGameSdk.options();
         if (!TextUtils.isEmpty(options.getLtAppId()) &&
                 !TextUtils.isEmpty(options.getLtAppKey()) &&
+                !TextUtils.isEmpty(options.getAdID()) &&
+                !TextUtils.isEmpty(options.getPackageID()) &&
                 !TextUtils.isEmpty(accessToken) &&
                 !TextUtils.isEmpty(openID) &&
                 !TextUtils.isEmpty(adid)) {
@@ -794,6 +814,8 @@ public class LoginRealizeManager {
             map.put("open_id", openID);
             map.put("adid", adid);
             map.put("platform", 2);
+            map.put("gps_adid", options.getAdID());
+            map.put("platform_id", options.getPackageID());
 
             String baseUrl = "";
             if (options.getISServerTest()) {
@@ -854,6 +876,8 @@ public class LoginRealizeManager {
         LTGameOptions options = LTGameSdk.options();
         if (!TextUtils.isEmpty(options.getLtAppId()) &&
                 !TextUtils.isEmpty(options.getLtAppKey()) &&
+                !TextUtils.isEmpty(options.getAdID()) &&
+                !TextUtils.isEmpty(options.getPackageID()) &&
                 !TextUtils.isEmpty(accessToken) &&
                 !TextUtils.isEmpty(adid)) {
             long LTTime = System.currentTimeMillis() / 1000L;
@@ -862,6 +886,8 @@ public class LoginRealizeManager {
             map.put("access_token", accessToken);
             map.put("adid", adid);
             map.put("platform", 2);
+            map.put("gps_adid", options.getAdID());
+            map.put("platform_id", options.getPackageID());
 
             String baseUrl = "";
             if (options.getISServerTest()) {
@@ -1075,6 +1101,7 @@ public class LoginRealizeManager {
             params.put("adid", options.getAdID());
             params.put("gps_adid", options.getAdID());
             params.put("platform_id", options.getPackageID());
+
 
 
             Api.getInstance((Activity) context, baseUrl)
@@ -1337,6 +1364,8 @@ public class LoginRealizeManager {
             Map<String, Object> params = new WeakHashMap<>();
             params.put("platform", 2);
             params.put("adid", adid);
+            params.put("gps_adid",adid);
+            params.put("platform_id", AppUtil.getPackageName(context));
             params.put("r_id", roleID);
             params.put("r_name", roleName);
             params.put("r_sex", roleSex);
