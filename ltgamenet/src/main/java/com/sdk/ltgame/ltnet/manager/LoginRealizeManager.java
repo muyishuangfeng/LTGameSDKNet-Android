@@ -4,17 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.gentop.ltgame.ltgamesdkcore.util.FileUtil;
-import com.sdk.ltgame.ltnet.base.Constants;
-import com.sdk.ltgame.ltnet.impl.OnAutoCheckLoginListener;
-import com.sdk.ltgame.ltnet.impl.OnWeChatAccessTokenListener;
-import com.sdk.ltgame.ltnet.model.AuthWXModel;
-import com.sdk.ltgame.ltnet.model.WeChatAccessToken;
-import com.sdk.ltgame.ltnet.net.Api;
-import com.sdk.ltgame.ltnet.net.exception.ExceptionHelper;
-import com.sdk.ltgame.ltnet.util.AppUtil;
-import com.sdk.ltgame.ltnet.util.MD5Util;
-import com.sdk.ltgame.ltnet.util.PreferencesUtils;
 import com.gentop.ltgame.ltgamesdkcore.base.BaseEntry;
 import com.gentop.ltgame.ltgamesdkcore.common.LTGameOptions;
 import com.gentop.ltgame.ltgamesdkcore.common.LTGameSdk;
@@ -25,6 +14,16 @@ import com.gentop.ltgame.ltgamesdkcore.model.LoginResult;
 import com.gentop.ltgame.ltgamesdkcore.model.RechargeResult;
 import com.gentop.ltgame.ltgamesdkcore.model.ResultModel;
 import com.google.gson.Gson;
+import com.sdk.ltgame.ltnet.base.Constants;
+import com.sdk.ltgame.ltnet.impl.OnAutoCheckLoginListener;
+import com.sdk.ltgame.ltnet.impl.OnWeChatAccessTokenListener;
+import com.sdk.ltgame.ltnet.model.AuthWXModel;
+import com.sdk.ltgame.ltnet.model.WeChatAccessToken;
+import com.sdk.ltgame.ltnet.net.Api;
+import com.sdk.ltgame.ltnet.net.exception.ExceptionHelper;
+import com.sdk.ltgame.ltnet.util.AppUtil;
+import com.sdk.ltgame.ltnet.util.MD5Util;
+import com.sdk.ltgame.ltnet.util.PreferencesUtils;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -261,8 +260,7 @@ public class LoginRealizeManager {
                 String authorization = "Bearer " + PreferencesUtils.getString(context, Constants.USER_API_TOKEN);
 
                 Api.getInstance(context, baseUrl)
-                        .createOrder(options.getLtAppId(), LTToken, (int) LTTime, authorization,
-                                requestBody)
+                        .createOrder(options.getLtAppId(), LTToken, (int) LTTime, authorization, requestBody)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<BaseEntry<ResultModel>>() {
